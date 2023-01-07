@@ -4,7 +4,7 @@
 
 namespace herd::common
 {
-	enum class ColumnType
+	enum class DataType
 	{
 		BIT,
 
