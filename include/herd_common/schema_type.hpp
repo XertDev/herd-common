@@ -8,6 +8,7 @@ namespace herd::common
 {
 	enum class SchemaType : uint8_t
 	{
+		NONE,
 		BINFHE
 	};
 }
