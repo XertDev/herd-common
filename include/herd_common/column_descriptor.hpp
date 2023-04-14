@@ -11,6 +11,10 @@ namespace herd::common
 {
 	struct ColumnDescriptor
 	{
+		ColumnDescriptor(uint8_t col_index, herd::common::DataType col_type)
+				: index(col_index), type(col_type)
+		{};
+
 		uint8_t index;
 		herd::common::DataType type;
 	};
