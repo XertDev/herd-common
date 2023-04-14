@@ -2,6 +2,7 @@
 #define HERDSMAN_COLUMNS_HPP
 
 #include <map>
+#include <string>
 
 #include "herd_common/data_type.hpp"
 
