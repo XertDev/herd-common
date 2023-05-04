@@ -6,8 +6,12 @@ project(
         LANGUAGES CXX
 )
 
+## UUID
+pkg_search_module(UUID REQUIRED uuid)
+
 ## Common
-add_library(herd_common INTERFACE)
+add_library(herd_common)
+target_compile_features(herd_common INTERFACE cxx_std_20)
 
 # Warnings config
 if(MSVC)
@@ -51,7 +55,7 @@ else()
 endif()
 
 # Project options config
-target_compile_features(herd_common INTERFACE cxx_std_20)
+target_compile_features(herd_common PRIVATE cxx_std_20)
 
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     if(!MSVC)
@@ -64,13 +68,19 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     endif()
 endif()
 
-target_include_directories(herd_common INTERFACE include)
+target_link_libraries(herd_common
+        PRIVATE
+        ${UUID_LIBRARIES}
+)
 
-#target_sources(
-#        herd_common
-#        PRIVATE
-#
-#        include/herd_common/column_type.hpp
-#        include/herd_common/schema_type.hpp
-#)
+target_include_directories(herd_common PUBLIC include)
+target_include_directories(herd_common PRIVATE include)
+
+target_sources(
+        herd_common
+        PRIVATE
+        src/uuid.cpp
+
+        include/herd_common/uuid.hpp
+)
 
