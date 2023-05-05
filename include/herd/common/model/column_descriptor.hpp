@@ -1,10 +1,10 @@
-#ifndef HERDSMAN_COLUMNS_HPP
-#define HERDSMAN_COLUMNS_HPP
+#ifndef HERD_COMMON_COLUMN_DESCRIPTOR_HPP
+#define HERD_COMMON_COLUMN_DESCRIPTOR_HPP
 
 #include <map>
 #include <string>
 
-#include "herd_common/data_type.hpp"
+#include "herd/common/model/data_type.hpp"
 
 
 namespace herd::common
@@ -16,10 +16,10 @@ namespace herd::common
 		{};
 
 		uint8_t index;
-		herd::common::DataType type;
+		DataType type;
 	};
 
 	using column_map_type = std::map<std::string, ColumnDescriptor, std::less<>>;
 }
 
-#endif //HERDSMAN_COLUMNS_HPP
+#endif //HERD_COMMON_COLUMN_DESCRIPTOR_HPP

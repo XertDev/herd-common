@@ -81,6 +81,14 @@ target_sources(
         PRIVATE
         src/uuid.cpp
 
-        include/herd_common/uuid.hpp
+        include/herd/common/uuid.hpp
+        include/herd/common/dag.hpp
+
+        include/herd/common/model/column_descriptor.hpp
+        include/herd/common/model/data_type.hpp
+        include/herd/common/model/execution_plan.hpp
+        include/herd/common/model/job.hpp
+        include/herd/common/model/schema_type.hpp
+
 )
 
