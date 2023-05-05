@@ -115,19 +115,19 @@ namespace herd::common
 	// Implementation
 
 	template<typename T>
-	const DAG<T>::value_type& DAG<T>::Node::value() const noexcept
+	const typename DAG<T>::value_type& DAG<T>::Node::value() const noexcept
 	{
 		return graph_.values_[index_];
 	}
 
 	template<typename T>
-	DAG<T>::value_type& DAG<T>::Node::value() noexcept
+	typename DAG<T>::value_type& DAG<T>::Node::value() noexcept
 	{
 		return graph_.values_[index_];
 	}
 
 	template<typename T>
-	DAG<T>::Node& DAG<T>::Node::operator=(value_type val)
+	typename DAG<T>::Node& DAG<T>::Node::operator=(value_type val)
 	{
 		graph_.values_[index_] = val;
 		return *this;
@@ -149,7 +149,7 @@ namespace herd::common
 
 	template<typename T>
 	template<bool is_const>
-	DAG<T>::NodeIterator<is_const>::reference DAG<T>::NodeIterator<is_const>::operator*() const noexcept
+	typename DAG<T>::template NodeIterator<is_const>::reference DAG<T>::NodeIterator<is_const>::operator*() const noexcept
 	{
 		return graph_->values_[index_];
 	}
@@ -175,7 +175,7 @@ namespace herd::common
 
 	template<typename T>
 	template<bool is_const>
-	DAG<T>::NodeIterator<is_const>::self_type& DAG<T>::NodeIterator<is_const>::operator++() noexcept
+	typename DAG<T>::template NodeIterator<is_const>::self_type& DAG<T>::NodeIterator<is_const>::operator++() noexcept
 	{
 		++index_;
 		return *this;
@@ -183,7 +183,7 @@ namespace herd::common
 
 	template<typename T>
 	template<bool is_const>
-	DAG<T>::NodeIterator<is_const>::self_type& DAG<T>::NodeIterator<is_const>::operator--() noexcept
+	typename DAG<T>::template NodeIterator<is_const>::self_type& DAG<T>::NodeIterator<is_const>::operator--() noexcept
 	{
 		--index_;
 		return *this;
@@ -191,7 +191,7 @@ namespace herd::common
 
 	template<typename T>
 	template<bool is_const>
-	DAG<T>::NodeIterator<is_const>::self_type DAG<T>::NodeIterator<is_const>::operator++(int) noexcept
+	typename DAG<T>::template NodeIterator<is_const>::self_type DAG<T>::NodeIterator<is_const>::operator++(int) noexcept
 	{
 		const auto temp = *this;
 		++index_;
@@ -200,7 +200,7 @@ namespace herd::common
 
 	template<typename T>
 	template<bool is_const>
-	DAG<T>::NodeIterator<is_const>::self_type DAG<T>::NodeIterator<is_const>::operator--(int) noexcept
+	typename DAG<T>::template NodeIterator<is_const>::self_type DAG<T>::NodeIterator<is_const>::operator--(int) noexcept
 	{
 		const auto temp = *this;
 		--index_;
@@ -209,7 +209,7 @@ namespace herd::common
 
 	template<typename T>
 	template<bool is_const>
-	DAG<T>::NodeIterator<is_const>::self_type& DAG<T>::NodeIterator<is_const>::operator+=(std::size_t shift) noexcept
+	typename DAG<T>::template NodeIterator<is_const>::self_type& DAG<T>::NodeIterator<is_const>::operator+=(std::size_t shift) noexcept
 	{
 		index_ += shift;
 		return *this;
@@ -217,7 +217,7 @@ namespace herd::common
 
 	template<typename T>
 	template<bool is_const>
-	DAG<T>::NodeIterator<is_const>::self_type& DAG<T>::NodeIterator<is_const>::operator-=(std::size_t shift) noexcept
+	typename DAG<T>::template NodeIterator<is_const>::self_type& DAG<T>::NodeIterator<is_const>::operator-=(std::size_t shift) noexcept
 	{
 		index_ -= shift;
 		return *this;
@@ -225,7 +225,7 @@ namespace herd::common
 
 	template<typename T>
 	template<bool is_const>
-	DAG<T>::NodeIterator<is_const>::self_type DAG<T>::NodeIterator<is_const>::operator+(std::size_t shift) const noexcept
+	typename DAG<T>::template NodeIterator<is_const>::self_type DAG<T>::NodeIterator<is_const>::operator+(std::size_t shift) const noexcept
 	{
 		return DAG<T>::NodeIterator<is_const>::self_type(graph_, index_ + shift);
 	}
@@ -233,7 +233,7 @@ namespace herd::common
 
 	template<typename T>
 	template<bool is_const>
-	DAG<T>::NodeIterator<is_const>::self_type DAG<T>::NodeIterator<is_const>::operator-(std::size_t shift) const noexcept
+	typename DAG<T>::template NodeIterator<is_const>::self_type DAG<T>::NodeIterator<is_const>::operator-(std::size_t shift) const noexcept
 	{
 		return DAG<T>::NodeIterator<is_const>::self_type(graph_, index_ - shift);
 	}
@@ -246,14 +246,14 @@ namespace herd::common
 
 	template<typename T>
 	template<bool is_const>
-	DAG<T>::NodeIterator<is_const>::difference_type DAG<T>::NodeIterator<is_const>::operator-(const DAG<T>::NodeIterator<is_const>::self_type& rhs) const noexcept
+	typename DAG<T>::template NodeIterator<is_const>::difference_type DAG<T>::NodeIterator<is_const>::operator-(const DAG<T>::NodeIterator<is_const>::self_type& rhs) const noexcept
 	{
 		return index_ - rhs.index_;
 	}
 
 	template<typename T>
 	template<typename V>
-	DAG<T>::iterator DAG<T>::emplace(V&& value, const DAG::const_iterator& parent)
+	typename DAG<T>::iterator DAG<T>::emplace(V&& value, const DAG::const_iterator& parent)
 		requires std::is_same_v<std::remove_cvref_t<V>, T>
 	{
 		const std::size_t new_node_index = values_.size();
@@ -265,7 +265,7 @@ namespace herd::common
 
 	template<typename T>
 	template<typename V>
-	DAG<T>::iterator DAG<T>::emplace(V&& value)
+	typename DAG<T>::iterator DAG<T>::emplace(V&& value)
 		requires std::is_same_v<std::remove_cvref_t<V>, T>
 	{
 		const std::size_t new_node_index = values_.size();
@@ -280,74 +280,74 @@ namespace herd::common
 	}
 
 	template<typename T>
-	DAG<T>::iterator DAG<T>::begin() noexcept
+	typename DAG<T>::iterator DAG<T>::begin() noexcept
 	{
 		return iterator(*this, 0);
 	}
 
 	template<typename T>
-	DAG<T>::const_iterator DAG<T>::begin() const noexcept
+	typename DAG<T>::const_iterator DAG<T>::begin() const noexcept
 	{
 		return const_iterator(this, 0);
 	}
 
 	template<typename T>
-	DAG<T>::iterator DAG<T>::end() noexcept
+	typename DAG<T>::iterator DAG<T>::end() noexcept
 	{
 		return iterator(this, values_.size());
 	}
 
 	template<typename T>
-	DAG<T>::const_iterator DAG<T>::end() const noexcept
+	typename DAG<T>::const_iterator DAG<T>::end() const noexcept
 	{
 		return const_iterator(this, values_.size());
 	}
 
 
 	template<typename T>
-	DAG<T>::reverse_iterator DAG<T>::rbegin() noexcept
+	typename DAG<T>::reverse_iterator DAG<T>::rbegin() noexcept
 	{
 		return reverse_iterator(end());
 	}
 
 	template<typename T>
-	DAG<T>::const_reverse_iterator DAG<T>::rbegin() const noexcept
+	typename DAG<T>::const_reverse_iterator DAG<T>::rbegin() const noexcept
 	{
 		return const_reverse_iterator(end());
 	}
 
 	template<typename T>
-	DAG<T>::reverse_iterator DAG<T>::rend() noexcept
+	typename DAG<T>::reverse_iterator DAG<T>::rend() noexcept
 	{
 		return reverse_iterator(begin());
 	}
 
 	template<typename T>
-	DAG<T>::const_reverse_iterator DAG<T>::rend() const noexcept
+	typename DAG<T>::const_reverse_iterator DAG<T>::rend() const noexcept
 	{
 		return const_reverse_iterator(begin());
 	}
 
 	template<typename T>
-	DAG<T>::const_iterator DAG<T>::cbegin() const noexcept
+	typename DAG<T>::const_iterator DAG<T>::cbegin() const noexcept
 	{
 		return DAG::const_iterator(this, 0);
 	}
 
 	template<typename T>
-	DAG<T>::const_iterator DAG<T>::cend() const noexcept
+	typename DAG<T>::const_iterator DAG<T>::cend() const noexcept
 	{
 		return DAG::const_iterator(this, values_.size());
 	}
 
 	template<typename T>
-	DAG<T>::const_reverse_iterator DAG<T>::crbegin() const noexcept
+	typename DAG<T>::const_reverse_iterator DAG<T>::crbegin() const noexcept
 	{
 		return const_reverse_iterator(cend());
 	}
 
 	template<typename T>
-	DAG<T>::const_reverse_iterator DAG<T>::crend() const noexcept
+	typename DAG<T>::const_reverse_iterator DAG<T>::crend() const noexcept
 	{
 		return const_reverse_iterator(cbegin());
 	}
