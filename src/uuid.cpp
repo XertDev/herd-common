@@ -55,7 +55,7 @@ namespace std
 	{
 		size_t hash_val = 0;
 		const auto uuid_bytes = uuid.as_bytes();
-		for (std::size_t i = 0; i < sizeof(uuid_t); ++i)
+		for(std::size_t i = 0; i < sizeof(uuid_t); ++i)
 		{
 			hash_val = hash_val * 27 + uuid_bytes[i];
 		}

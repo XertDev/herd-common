@@ -2,13 +2,13 @@
 #define HERD_COMMON_EXECUTION_PLAN_HPP
 
 #include <cstdint>
-#include <vector>
 #include <optional>
+#include <vector>
 
 #include "herd/common/model/schema_type.hpp"
 
-#include "herd/common/uuid.hpp"
 #include "herd/common/dag.hpp"
+#include "herd/common/uuid.hpp"
 
 
 namespace herd::common
@@ -29,6 +29,6 @@ namespace herd::common
 
 		herd::common::DAG<Stage> stages;
 	};
-}
+} // namespace herd::common
 
 #endif //HERD_COMMON_EXECUTION_PLAN_HPP

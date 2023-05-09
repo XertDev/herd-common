@@ -1,9 +1,9 @@
 #ifndef HERD_COMMON_DAG_HPP
 #define HERD_COMMON_DAG_HPP
 
-#include <vector>
 #include <map>
 #include <type_traits>
+#include <vector>
 
 
 namespace herd::common

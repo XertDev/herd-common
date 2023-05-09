@@ -8,9 +8,9 @@
 	#error "System not supported"
 #endif
 
-#include <string>
-#include <ranges>
 #include <compare>
+#include <ranges>
+#include <string>
 
 namespace herd::common
 {
