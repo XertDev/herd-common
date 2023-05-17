@@ -4,6 +4,8 @@
 #include <map>
 #include <type_traits>
 #include <vector>
+#include <algorithm>
+#include <utility>
 
 
 namespace herd::common
@@ -15,18 +17,26 @@ namespace herd::common
 		using node_id_t = std::size_t;
 		using value_type = std::remove_cvref_t<T>;
 
+		template<bool is_const>
 		class Node
 		{
-			using graph_type = DAG;
+		public:
+			using graph_type = std::conditional_t<is_const, const DAG*, DAG*>;
 
 			const value_type& value() const noexcept;
-			value_type& value() noexcept;
+			value_type& value() noexcept
+				requires (!is_const);
 
-			Node& operator=(value_type);
+			Node& operator=(value_type)
+				requires (!is_const);
 
 		private:
-			graph_type& graph_;
+			Node(graph_type graph, std::size_t index);
+
+			graph_type graph_;
 			std::size_t index_ = 0;
+
+			friend class DAG<T>;
 		};
 
 		template<bool is_const>
@@ -40,7 +50,7 @@ namespace herd::common
 			using difference_type = std::ptrdiff_t;
 			using value_type = std::conditional_t<is_const, const DAG::value_type, DAG::value_type>;
 			using pointer = value_type*;
-			using reference = value_type&;
+			using reference = DAG::Node<is_const>;
 
 			NodeIterator();
 
@@ -81,14 +91,25 @@ namespace herd::common
 		using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
 		template<typename V>
-		iterator emplace(V&& value, const const_iterator& parent)
+		iterator insert(const DAG::const_iterator& parent, V&& value)
 			requires std::is_same_v<std::remove_cvref_t<V>, T>;
 
 		template<typename V>
-		iterator emplace(V&& value)
+		iterator insert(V&& value)
 			requires std::is_same_v<std::remove_cvref_t<V>, T>;
 
+		template<typename... Args>
+		iterator emplace(const DAG::const_iterator& parent, Args&&... args)
+			requires std::is_constructible_v<T, Args...>;
+
+		template<typename... Args>
+		iterator emplace(Args&&... args)
+			requires std::is_constructible_v<T, Args...>;
+
 		void add_edge(const const_iterator& from, const const_iterator& to);
+
+		std::vector<Node<false>> source_nodes();
+		std::vector<Node<true>> source_nodes() const;
 
 		[[nodiscard]] iterator begin() noexcept;
 		[[nodiscard]] const_iterator begin() const noexcept;
@@ -111,26 +132,37 @@ namespace herd::common
 		std::vector<T> values_;
 		std::multimap<node_id_t, node_id_t> edges_;
 	};
-
 	// Implementation
 
 	template<typename T>
-	const typename DAG<T>::value_type& DAG<T>::Node::value() const noexcept
+	template<bool is_const>
+	const typename DAG<T>::value_type& DAG<T>::Node<is_const>::value() const noexcept
 	{
-		return graph_.values_[index_];
+		return graph_->values_[index_];
 	}
 
 	template<typename T>
-	typename DAG<T>::value_type& DAG<T>::Node::value() noexcept
+	template<bool is_const>
+	typename DAG<T>::value_type& DAG<T>::Node<is_const>::value() noexcept
+		requires (!is_const)
 	{
-		return graph_.values_[index_];
+		return graph_->values_[index_];
 	}
 
 	template<typename T>
-	typename DAG<T>::Node& DAG<T>::Node::operator=(value_type val)
+	template<bool is_const>
+	typename DAG<T>::template Node<is_const>& DAG<T>::Node<is_const>::operator=(value_type val)
+		requires (!is_const)
 	{
-		graph_.values_[index_] = val;
+		graph_->values_[index_] = val;
 		return *this;
+	}
+
+	template<typename T>
+	template<bool is_const>
+	DAG<T>::Node<is_const>::Node(DAG::Node<is_const>::graph_type graph, std::size_t index)
+	:	graph_(graph), index_(index)
+	{
 	}
 
 	template<typename T>
@@ -151,7 +183,7 @@ namespace herd::common
 	template<bool is_const>
 	typename DAG<T>::template NodeIterator<is_const>::reference DAG<T>::NodeIterator<is_const>::operator*() const noexcept
 	{
-		return graph_->values_[index_];
+		return Node(graph_, index_);
 	}
 
 	template<typename T>
@@ -253,19 +285,19 @@ namespace herd::common
 
 	template<typename T>
 	template<typename V>
-	typename DAG<T>::iterator DAG<T>::emplace(V&& value, const DAG::const_iterator& parent)
+	typename DAG<T>::iterator DAG<T>::insert(const DAG::const_iterator& parent, V&& value)
 		requires std::is_same_v<std::remove_cvref_t<V>, T>
 	{
 		const std::size_t new_node_index = values_.size();
 		values_.emplace_back(value);
 		edges_.emplace(parent.index_, new_node_index);
 
-		return iterator(*this, new_node_index);
+		return iterator(this, new_node_index);
 	}
 
 	template<typename T>
 	template<typename V>
-	typename DAG<T>::iterator DAG<T>::emplace(V&& value)
+	typename DAG<T>::iterator DAG<T>::insert(V&& value)
 		requires std::is_same_v<std::remove_cvref_t<V>, T>
 	{
 		const std::size_t new_node_index = values_.size();
@@ -274,10 +306,70 @@ namespace herd::common
 	}
 
 	template<typename T>
+	template<typename... Args>
+	typename DAG<T>::iterator DAG<T>::emplace(const DAG::const_iterator& parent, Args&&... args)
+		requires std::is_constructible_v<T, Args...>
+	{
+		const std::size_t new_node_index = values_.size();
+		values_.emplace_back(args...);
+		edges_.emplace(parent.index_, new_node_index);
+
+		return iterator(this, new_node_index);
+	}
+
+	template<typename T>
+	template<typename... Args>
+	typename DAG<T>::iterator DAG<T>::emplace(Args&&... args)
+		requires std::is_constructible_v<T, Args...>
+	{
+		const std::size_t new_node_index = values_.size();
+		values_.emplace_back(args...);
+		return iterator(this, new_node_index);
+	}
+
+	template<typename T>
 	void DAG<T>::add_edge(const DAG::const_iterator& from, const DAG::const_iterator& to)
 	{
 		edges_.emplace(from.index_, to.index_);
 	}
+
+	template<typename T>
+	std::vector<typename DAG<T>::template Node<false>> DAG<T>::source_nodes()
+	{
+		std::vector<Node<false>> nodes;
+		for(std::size_t i = 0; i < values_.size(); ++i)
+		{
+			bool is_source = std::ranges::all_of(edges_,
+												 [&i](const auto& entry)
+												 {
+													 return entry.second != i;
+												 });
+			if(is_source)
+			{
+				nodes.emplace_back(Node<false>(this, i));
+			}
+		}
+		return nodes;	}
+
+	template<typename T>
+	std::vector<typename DAG<T>::template Node<true>> DAG<T>::source_nodes() const
+	{
+		std::vector<Node<true>> nodes;
+		for(std::size_t i = 0; i < values_.size(); ++i)
+		{
+			bool is_source = std::ranges::all_of(edges_,
+					[&i](const auto& entry)
+					{
+						return entry.second != i;
+					});
+			if(is_source)
+			{
+				nodes.emplace_back(Node<true>(this, i));
+			}
+		}
+		return nodes;
+	}
+
 
 	template<typename T>
 	typename DAG<T>::iterator DAG<T>::begin() noexcept
