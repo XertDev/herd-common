@@ -108,8 +108,14 @@ namespace herd::common
 
 		void add_edge(const const_iterator& from, const const_iterator& to);
 
-		std::vector<Node<false>> source_nodes();
-		std::vector<Node<true>> source_nodes() const;
+		std::size_t node_size() const noexcept;
+		std::size_t edges_size() const noexcept;
+
+		[[nodiscard]] std::vector<Node<false>> source_nodes();
+		[[nodiscard]] std::vector<Node<true>> source_nodes() const;
+
+		[[nodiscard]] std::vector<Node<false>> sink_nodes();
+		[[nodiscard]] std::vector<Node<true>> sink_nodes() const;
 
 		[[nodiscard]] iterator begin() noexcept;
 		[[nodiscard]] const_iterator begin() const noexcept;
@@ -334,6 +340,18 @@ namespace herd::common
 	}
 
 	template<typename T>
+	std::size_t DAG<T>::node_size() const noexcept
+	{
+		return values_.size();
+	}
+
+	template<typename T>
+	std::size_t DAG<T>::edges_size() const noexcept
+	{
+		return edges_.size();
+	}
+
+	template<typename T>
 	std::vector<typename DAG<T>::template Node<false>> DAG<T>::source_nodes()
 	{
 		std::vector<Node<false>> nodes;
@@ -370,6 +388,33 @@ namespace herd::common
 		return nodes;
 	}
 
+	template<typename T>
+	std::vector<typename DAG<T>::template Node<false>> DAG<T>::sink_nodes()
+	{
+		std::vector<Node<false>> nodes;
+		for(std::size_t i = 0; i < values_.size(); ++i)
+		{
+			if(!edges_.contains(i))
+			{
+				nodes.emplace_back(Node<false>(this, i));
+			}
+		}
+		return nodes;
+	}
+
+	template<typename T>
+	std::vector<typename DAG<T>::template Node<true>> DAG<T>::sink_nodes() const
+	{
+		std::vector<Node<true>> nodes;
+		for(std::size_t i = 0; i < values_.size(); ++i)
+		{
+			if(!edges_.contains(i))
+			{
+				nodes.emplace_back(Node<true>(this, i));
+			}
+		}
+		return nodes;
+	}
 
 	template<typename T>
 	typename DAG<T>::iterator DAG<T>::begin() noexcept
