@@ -86,9 +86,15 @@ target_sources(
 
         include/herd/common/model/column_descriptor.hpp
         include/herd/common/model/data_type.hpp
-        include/herd/common/model/execution_plan.hpp
         include/herd/common/model/job.hpp
         include/herd/common/model/schema_type.hpp
+
+        include/herd/common/model/executor/execution_plan.hpp
+        include/herd/common/model/executor/stage.hpp
+
+        include/herd/common/model/circuit/circuit.hpp
+        include/herd/common/model/circuit/nodes.hpp
+        include/herd/common/model/circuit/operation.hpp
 
 )
 

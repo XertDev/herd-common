@@ -23,6 +23,8 @@ namespace herd::common
 		public:
 			using graph_type = std::conditional_t<is_const, const DAG*, DAG*>;
 
+			Node() noexcept;
+
 			const value_type& value() const noexcept;
 			value_type& value() noexcept
 				requires (!is_const);
@@ -111,11 +113,16 @@ namespace herd::common
 		std::size_t node_size() const noexcept;
 		std::size_t edges_size() const noexcept;
 
+		const std::multimap<node_id_t, node_id_t>& edges() const;
+
 		[[nodiscard]] std::vector<Node<false>> source_nodes();
 		[[nodiscard]] std::vector<Node<true>> source_nodes() const;
 
 		[[nodiscard]] std::vector<Node<false>> sink_nodes();
 		[[nodiscard]] std::vector<Node<true>> sink_nodes() const;
+
+		[[nodiscard]] Node<false> operator[](std::size_t index) noexcept;
+		[[nodiscard]] Node<true> operator[](std::size_t index) const noexcept;
 
 		[[nodiscard]] iterator begin() noexcept;
 		[[nodiscard]] const_iterator begin() const noexcept;
@@ -139,6 +146,13 @@ namespace herd::common
 		std::multimap<node_id_t, node_id_t> edges_;
 	};
 	// Implementation
+
+	template<typename T>
+	template<bool is_const>
+	DAG<T>::Node<is_const>::Node() noexcept
+	:	graph_(nullptr)
+	{
+	}
 
 	template<typename T>
 	template<bool is_const>
@@ -189,7 +203,7 @@ namespace herd::common
 	template<bool is_const>
 	typename DAG<T>::template NodeIterator<is_const>::reference DAG<T>::NodeIterator<is_const>::operator*() const noexcept
 	{
-		return Node(graph_, index_);
+		return Node<is_const>(graph_, index_);
 	}
 
 	template<typename T>
@@ -352,6 +366,12 @@ namespace herd::common
 	}
 
 	template<typename T>
+	const std::multimap<typename DAG<T>::node_id_t, typename DAG<T>::node_id_t>& DAG<T>::edges() const
+	{
+		return edges_;
+	}
+
+	template<typename T>
 	std::vector<typename DAG<T>::template Node<false>> DAG<T>::source_nodes()
 	{
 		std::vector<Node<false>> nodes;
@@ -417,9 +437,21 @@ namespace herd::common
 	}
 
 	template<typename T>
+	typename DAG<T>::template Node<false> DAG<T>::operator[](std::size_t index) noexcept
+	{
+		return DAG::Node<false>(this, index);
+	}
+
+	template<typename T>
+	typename DAG<T>::template Node<true> DAG<T>::operator[](std::size_t index) const noexcept
+	{
+		return DAG::Node<true>(this, index);
+	}
+
+	template<typename T>
 	typename DAG<T>::iterator DAG<T>::begin() noexcept
 	{
-		return iterator(*this, 0);
+		return iterator(this, 0);
 	}
 
 	template<typename T>
