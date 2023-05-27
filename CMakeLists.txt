@@ -84,6 +84,7 @@ target_sources(
         include/herd/common/uuid.hpp
         include/herd/common/dag.hpp
 
+        include/herd/common/model/column_meta.hpp
         include/herd/common/model/column_descriptor.hpp
         include/herd/common/model/data_type.hpp
         include/herd/common/model/job.hpp
