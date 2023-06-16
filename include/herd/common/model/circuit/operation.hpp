@@ -2,7 +2,7 @@
 #define HERD_COMMON_OPERATION_HPP
 
 #include <cstdint>
-#include <vector>
+#include <array>
 
 #include "herd/common/model/schema_type.hpp"
 
@@ -17,6 +17,21 @@ namespace herd::common
 		XOR,
 		NAND,
 		MUX,
+	};
+
+	constexpr std::array<Operation, 1> UNARY_OPERATIONS = {
+			Operation::NOT
+	};
+
+	constexpr std::array<Operation, 4> BINARY_OPERATIONS = {
+			Operation::AND,
+			Operation::OR,
+			Operation::XOR,
+			Operation::NAND
+	};
+
+	constexpr std::array<Operation, 1> TERNARY_OPERATIONS = {
+			Operation::MUX
 	};
 }
 

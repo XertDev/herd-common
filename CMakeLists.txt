@@ -90,6 +90,10 @@ target_sources(
         include/herd/common/model/job.hpp
         include/herd/common/model/schema_type.hpp
 
+        include/herd/common/model/worker/task.hpp
+        include/herd/common/model/worker/data_frame_ptr.hpp
+        include/herd/common/model/worker/crypto_key_ptr.hpp
+
         include/herd/common/model/executor/execution_plan.hpp
         include/herd/common/model/executor/stage.hpp
 

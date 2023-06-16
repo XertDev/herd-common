@@ -32,6 +32,14 @@ namespace herd::common
 			Node& operator=(value_type)
 				requires (!is_const);
 
+			std::vector<Node<false>> parents()
+				requires (!is_const);
+			std::vector<Node<true>> parents() const;
+
+			std::vector<Node<false>> children()
+				requires (!is_const);
+			std::vector<Node<true>> children() const;
+
 		private:
 			Node(graph_type graph, std::size_t index);
 
@@ -144,6 +152,7 @@ namespace herd::common
 	private:
 		std::vector<T> values_;
 		std::multimap<node_id_t, node_id_t> edges_;
+		std::multimap<node_id_t, node_id_t> reverse_edges_;
 	};
 	// Implementation
 
@@ -176,6 +185,74 @@ namespace herd::common
 	{
 		graph_->values_[index_] = val;
 		return *this;
+	}
+
+	template<typename T>
+	template<bool is_const>
+	std::vector<typename DAG<T>::template Node<false>> DAG<T>::Node<is_const>::parents()
+		requires(!is_const)
+	{
+		std::vector<Node<false>> result;
+
+		auto [iter, end] = graph_->reverse_edges_.equal_range(index_);
+		result.reserve(static_cast<std::size_t>(std::distance(iter, end)));
+
+		for(; iter != end; ++iter)
+		{
+			result.emplace_back(Node<false>(graph_, iter->second));
+		}
+
+		return result;
+	}
+
+	template<typename T>
+	template<bool is_const>
+	std::vector<typename DAG<T>::template Node<true>> DAG<T>::Node<is_const>::parents() const
+	{
+		std::vector<Node<true>> result;
+
+		auto [iter, end] = graph_->reverse_edges_.equal_range(index_);
+		result.reserve(static_cast<std::size_t>(std::distance(iter, end)));
+
+		for(; iter != end; ++iter)
+		{
+			result.emplace_back(Node<true>(graph_, iter->second));
+		}
+
+		return result;
+	}
+
+	template<typename T>
+	template<bool is_const>
+	std::vector<typename DAG<T>::template Node<false>> DAG<T>::Node<is_const>::children()
+		requires (!is_const)
+	{
+		std::vector<Node<false>> result;
+		auto [iter, end] = graph_->edges_.equal_range(index_);
+		result.reserve(static_cast<std::size_t>(std::distance(iter, end)));
+
+		for(; iter != end; ++iter)
+		{
+			result.emplace_back(Node<false>(graph_, iter->second));
+		}
+
+		return result;
+	}
+
+	template<typename T>
+	template<bool is_const>
+	std::vector<typename DAG<T>::template Node<true>> DAG<T>::Node<is_const>::children() const
+	{
+		std::vector<Node<true>> result;
+		auto [iter, end] = graph_->edges_.equal_range(index_);
+		result.reserve(static_cast<std::size_t>(std::distance(iter, end)));
+
+		for(; iter != end; ++iter)
+		{
+			result.emplace_back(Node<true>(graph_, iter->second));
+		}
+
+		return std::vector<Node<true>>();
 	}
 
 	template<typename T>
@@ -321,7 +398,7 @@ namespace herd::common
 		requires std::is_same_v<std::remove_cvref_t<V>, T>
 	{
 		const std::size_t new_node_index = values_.size();
-		values_.emplace_back(value);
+		values_.emplace_back(std::forward<V>(value));
 		return iterator(this, new_node_index);
 	}
 
@@ -333,6 +410,7 @@ namespace herd::common
 		const std::size_t new_node_index = values_.size();
 		values_.emplace_back(args...);
 		edges_.emplace(parent.index_, new_node_index);
+		reverse_edges_.emplace(new_node_index, parent.index_);
 
 		return iterator(this, new_node_index);
 	}
@@ -351,6 +429,7 @@ namespace herd::common
 	void DAG<T>::add_edge(const DAG::const_iterator& from, const DAG::const_iterator& to)
 	{
 		edges_.emplace(from.index_, to.index_);
+		reverse_edges_.emplace(to.index_, from.index_);
 	}
 
 	template<typename T>
@@ -374,6 +453,7 @@ namespace herd::common
 	template<typename T>
 	std::vector<typename DAG<T>::template Node<false>> DAG<T>::source_nodes()
 	{
+		//todo: use reverse edges relation
 		std::vector<Node<false>> nodes;
 		for(std::size_t i = 0; i < values_.size(); ++i)
 		{
@@ -392,6 +472,7 @@ namespace herd::common
 	template<typename T>
 	std::vector<typename DAG<T>::template Node<true>> DAG<T>::source_nodes() const
 	{
+		//todo: use reverse edges relation
 		std::vector<Node<true>> nodes;
 		for(std::size_t i = 0; i < values_.size(); ++i)
 		{
