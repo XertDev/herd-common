@@ -37,7 +37,7 @@ runs:
         mkdir build -p
         cd build
         cmake -DBUILD_UNITTESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF -DBUILD_EXTRAS=OFF .. 
-        make
+        make -j 4
       shell: bash
 
     - name: Install OpenFHE
