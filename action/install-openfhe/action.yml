@@ -7,6 +7,7 @@ inputs:
     default: '.'
 
   version:
+    required: false
     description: 'OpenFHE library version'
     default: 'v1.0.0'
 
@@ -19,6 +20,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: ${{ inputs.prefix }}
+        key: openfhe-${{ inputs.version }}
 
     - name: Download OpenFHE
       if: steps.openfhe.outputs.cache-hit != 'true'
