@@ -9,7 +9,7 @@ inputs:
   version:
     required: false
     description: 'OpenFHE library version'
-    default: 'v1.0.0'
+    default: 'v1.0.3'
 
   parallel:
     required: false
