@@ -9,13 +9,22 @@
 
 namespace herd::common
 {
-	struct Task
-	{
+	struct MapTask {
 		UUID session_uuid;
 
-		DataFramePtr input_data_frame_ptr;
+		InputDataFramePtr input_data_frame_ptr;
 		DataFramePtr output_data_frame_ptr;
-		uint64_t row_count;
+
+		CryptoKeyPtr crypto_key_ptr;
+
+		Circuit circuit;
+	};
+
+	struct ReduceTask {
+		UUID session_uuid;
+
+		std::vector<InputDataFramePtr> input_data_frame_ptrs;
+		DataFramePtr output_data_frame_ptr;
 
 		CryptoKeyPtr crypto_key_ptr;
 

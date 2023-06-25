@@ -11,6 +11,12 @@ namespace herd::common
 		UUID uuid;
 		uint64_t block_id;
 	};
+
+	struct InputDataFramePtr
+	{
+		DataFramePtr pointer;
+		uint64_t row_count;
+	};
 }
 
 #endif //HERD_COMMON_DATA_FRAME_PTR_HPP
