@@ -257,7 +257,7 @@ namespace herd::common
 			result.emplace_back(Node<true>(graph_, iter->second));
 		}
 
-		return std::vector<Node<true>>();
+		return result;
 	}
 
 	template<typename T>
