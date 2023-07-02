@@ -9,7 +9,7 @@ namespace herd::common
 	struct DataFramePtr
 	{
 		UUID uuid;
-		uint64_t block_id;
+		uint32_t partition;
 	};
 
 	struct InputDataFramePtr

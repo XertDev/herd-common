@@ -8,9 +8,14 @@
 
 namespace herd::common
 {
-	struct ColumnMeta {
+	struct ColumnMeta
+	{
 		std::string name;
 		DataType type;
+
+		ColumnMeta(std::string name, DataType type)
+		:	name(std::move(name)), type(type)
+		{};
 	};
 }
 

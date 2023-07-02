@@ -30,6 +30,8 @@ namespace herd::common
 
 		Circuit circuit;
 	};
+
+	using task_t = std::variant<MapTask, ReduceTask>;
 }
 
 #endif //HERD_COMMON_TASK_HPP

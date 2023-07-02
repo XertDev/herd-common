@@ -40,6 +40,11 @@ namespace herd::common
 				requires (!is_const);
 			std::vector<Node<true>> children() const;
 
+			[[nodiscard]] std::size_t node_id() const noexcept;
+
+			explicit operator Node<true>() const noexcept
+				requires (!is_const);
+
 		private:
 			Node(graph_type graph, std::size_t index);
 
@@ -253,6 +258,21 @@ namespace herd::common
 		}
 
 		return std::vector<Node<true>>();
+	}
+
+	template<typename T>
+	template<bool is_const>
+	std::size_t DAG<T>::Node<is_const>::node_id() const noexcept
+	{
+		return index_;
+	}
+
+	template<typename T>
+	template<bool is_const>
+	DAG<T>::Node<is_const>::operator Node<true>() const noexcept
+		requires(!is_const)
+	{
+		return DAG::Node<true>(graph_, index_);
 	}
 
 	template<typename T>
