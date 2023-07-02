@@ -13,8 +13,8 @@ namespace herd::common
 		std::string name;
 		DataType type;
 
-		ColumnMeta(std::string name, DataType type)
-		:	name(std::move(name)), type(type)
+		ColumnMeta(std::string column_name, DataType column_type)
+		:	name(std::move(column_name)), type(column_type)
 		{};
 	};
 }
