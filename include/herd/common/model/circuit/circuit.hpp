@@ -12,8 +12,8 @@ namespace herd::common
 {
 	struct Circuit
 	{
-		std::vector<unsigned int> input;
-		std::vector<unsigned int> output;
+		std::vector<DataType> input;
+		std::vector<DataType> output;
 
 		common::DAG<node_t> circuit_graph;
 	};

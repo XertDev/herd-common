@@ -80,9 +80,11 @@ target_sources(
         herd_common
         PRIVATE
         src/uuid.cpp
+        src/native_type_mapping.cpp
 
         include/herd/common/uuid.hpp
         include/herd/common/dag.hpp
+        include/herd/common/native_type_mapping.hpp
 
         include/herd/common/model/exception.hpp
 
