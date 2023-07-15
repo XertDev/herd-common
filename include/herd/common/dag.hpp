@@ -202,9 +202,10 @@ namespace herd::common
 		auto [iter, end] = graph_->reverse_edges_.equal_range(index_);
 		result.reserve(static_cast<std::size_t>(std::distance(iter, end)));
 
-		for(; iter != end; ++iter)
+		while(iter != end)
 		{
 			result.emplace_back(Node<false>(graph_, iter->second));
+			++iter;
 		}
 
 		return result;
@@ -219,9 +220,10 @@ namespace herd::common
 		auto [iter, end] = graph_->reverse_edges_.equal_range(index_);
 		result.reserve(static_cast<std::size_t>(std::distance(iter, end)));
 
-		for(; iter != end; ++iter)
+		while(iter != end)
 		{
 			result.emplace_back(Node<true>(graph_, iter->second));
+			++iter;
 		}
 
 		return result;
@@ -236,9 +238,10 @@ namespace herd::common
 		auto [iter, end] = graph_->edges_.equal_range(index_);
 		result.reserve(static_cast<std::size_t>(std::distance(iter, end)));
 
-		for(; iter != end; ++iter)
+		while(iter != end)
 		{
 			result.emplace_back(Node<false>(graph_, iter->second));
+			++iter;
 		}
 
 		return result;
@@ -252,9 +255,10 @@ namespace herd::common
 		auto [iter, end] = graph_->edges_.equal_range(index_);
 		result.reserve(static_cast<std::size_t>(std::distance(iter, end)));
 
-		for(; iter != end; ++iter)
+		while(iter != end)
 		{
 			result.emplace_back(Node<true>(graph_, iter->second));
+			++iter;
 		}
 
 		return result;
@@ -473,35 +477,24 @@ namespace herd::common
 	template<typename T>
 	std::vector<typename DAG<T>::template Node<false>> DAG<T>::source_nodes()
 	{
-		//todo: use reverse edges relation
 		std::vector<Node<false>> nodes;
 		for(std::size_t i = 0; i < values_.size(); ++i)
 		{
-			bool is_source = std::ranges::all_of(edges_,
-												 [&i](const auto& entry)
-												 {
-													 return entry.second != i;
-												 });
-			if(is_source)
+			if(!reverse_edges_.contains(i))
 			{
 				nodes.emplace_back(Node<false>(this, i));
 			}
 		}
-		return nodes;	}
+		return nodes;
+	}
 
 	template<typename T>
 	std::vector<typename DAG<T>::template Node<true>> DAG<T>::source_nodes() const
 	{
-		//todo: use reverse edges relation
 		std::vector<Node<true>> nodes;
 		for(std::size_t i = 0; i < values_.size(); ++i)
 		{
-			bool is_source = std::ranges::all_of(edges_,
-					[&i](const auto& entry)
-					{
-						return entry.second != i;
-					});
-			if(is_source)
+			if(!reverse_edges_.contains(i))
 			{
 				nodes.emplace_back(Node<true>(this, i));
 			}
