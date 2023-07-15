@@ -1,5 +1,7 @@
 #include "herd/common/native_type_mapping.hpp"
 
+#include <cassert>
+
 
 namespace herd::common
 {
@@ -27,5 +29,8 @@ namespace herd::common
 			case DataType::INT64:
 				return NativeTypeMapping<DataType::INT64>::bit_size;
 		}
+
+		assert(false && "Invalid type");
+		return 0;
 	}
 }
