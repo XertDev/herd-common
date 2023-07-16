@@ -23,7 +23,7 @@ namespace herd::common
 			{}
 		};
 
-		std::vector<DataType> input;
+		std::vector<std::vector<DataType>> inputs;
 		std::vector<OutputColumn> output;
 
 		common::DAG<node_t> circuit_graph;
