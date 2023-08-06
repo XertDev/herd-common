@@ -11,6 +11,7 @@
 #include <compare>
 #include <ranges>
 #include <string>
+#include <cstdint>
 
 namespace herd::common
 {
