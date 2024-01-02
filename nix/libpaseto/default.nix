@@ -12,7 +12,7 @@ gcc13Stdenv.mkDerivation rec {
     };
 
     nativeBuildInputs = [
-        pkgconfig
+        pkg-config
         cmake
         libsodium
     ];
