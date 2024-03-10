@@ -12,7 +12,8 @@ namespace herd::common
 	enum class Policy
 	{
 		SEQUENCED,
-		PARALLEL
+		PARALLEL,
+		PARALLEL_FULL
 	};
 
 	struct InputStage
@@ -29,6 +30,7 @@ namespace herd::common
 	{
 		Circuit circuit;
 		Policy policy = Policy::PARALLEL;
+		std::optional<uint32_t> parallel_tree_level_limit = std::nullopt;
 	};
 
 	struct OutputStage
