@@ -30,7 +30,7 @@ namespace herd::common
 	{
 		Circuit circuit;
 		Policy policy = Policy::PARALLEL;
-		std::optional<uint32_t> parallel_tree_level_limit = std::nullopt;
+		std::optional<uint32_t> per_node_count = std::nullopt;
 	};
 
 	struct OutputStage
